@@ -1,0 +1,25 @@
+services:
+  home-memory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: home-memory
+    restart: unless-stopped
+
+    ports:
+      - "5100:5100"
+
+    volumes:
+      # Update these paths to match your NAS volume — see NAS-SETUP.md
+      - /YOUR_DOCKER_PATH/home-memory/data:/data
+      - /YOUR_DOCKER_PATH/home-memory/firebird:/opt/firebird
+
+    environment:
+      - TZ=Your/Timezone    # e.g. Africa/Johannesburg, Europe/London, America/New_York
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5100/mcp || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
